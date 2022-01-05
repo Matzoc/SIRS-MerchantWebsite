@@ -1,9 +1,12 @@
 # syntax=docker/dockerfile:1
-FROM python:3.7-alpine
+FROM ubuntu
 WORKDIR /code
 ENV FLASK_APP=app.py
 ENV FLASK_RUN_HOST=0.0.0.0
-RUN apk add --no-cache gcc musl-dev linux-headers
+RUN apt-get update
+RUN apt-get install mysql-client -y
+RUN apt-get install libmysqlclient-dev mysql-server -y
+RUN apt-get install pip -y
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 EXPOSE 5000

@@ -1,2 +1,2 @@
 flask
-flask_musqldb
+flask_mysqldb
