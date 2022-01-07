@@ -14,7 +14,7 @@ app.config['MYSQL_DB'] = 'test'
 mysql = MySQL(app)
 
 def testDB():
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor = mysql.connection.cursor()
     cursor.execute('''SELECT * from users''')
     rv = cursor.fetchall()
 
