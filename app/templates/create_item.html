@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %} create item {% endblock %}
+
+{% block content %} 
+    {{error_msg}} 
+
+    <form action="/create_item" method="post">
+        <input class="input is-medium" type="text" id="name" name="name" placeholder="Item name"><br><br>
+
+        <input class="input is-medium" type="text" id="description" name="description" placeholder="Item description"><br><br>
+
+        <input class="input is-medium" type="text" id="price" name="price" placeholder="Item price"><br><br>
+
+        <input class="input is-medium" type="text" id="type" name="type" placeholder="Item Type"><br><br>
+        
+        <input class="button is-block is-info is-medium is-fullwidth" type="submit" value="Create">
+      </form>   
+      
+
+
+{% endblock %} 

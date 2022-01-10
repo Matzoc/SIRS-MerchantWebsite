@@ -1,6 +1,7 @@
-from flask import Flask
+from flask import Flask, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_required, current_user
+from datetime import timedelta
 from functools import wraps
 
 import os
@@ -16,6 +17,7 @@ def admin_login_required(f):
         return f(*args, **kwargs)
         
     return wrap
+
 
 
 def create_app():
@@ -38,6 +40,11 @@ def create_app():
     def load_user(user_id):
         return User.query.get(int(user_id))
 
+    @app.before_request
+    def before_request():
+        session.permanent = True
+        app.permanent_session_lifetime = timedelta(minutes=0.5)
+
     from .auth import auth as auth_blueprint
     app.register_blueprint(auth_blueprint)
 
@@ -48,11 +55,6 @@ def create_app():
 
 
 #add tries to everything(!)
-
-#sessions
-#   session cookie
-#   make the website remember you are logged in
-#   account levels
 
 #Account menu
 #   change password - later
