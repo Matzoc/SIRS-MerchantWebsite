@@ -2,9 +2,10 @@
 SIRS project, Merchant Website component
 
 # How to run
+In the project root:
 ```
 sudo docker-compose up --build
-sudo docker build -t merchant .
+sudo docker build -t merchant app
 
 ```
 
