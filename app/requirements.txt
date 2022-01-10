@@ -1,3 +1,6 @@
 flask
 argon2_cffi
 mysql-connector-python
+mysqlclient
+flask-sqlalchemy 
+flask-login

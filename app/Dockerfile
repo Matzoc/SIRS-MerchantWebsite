@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 FROM ubuntu
 WORKDIR /code
-ENV FLASK_APP=app.py
+ENV FLASK_APP=__init__.py
 ENV FLASK_RUN_HOST=0.0.0.0
 RUN apt-get update
 RUN apt-get install mysql-client -y
