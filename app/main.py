@@ -6,6 +6,7 @@ from . import admin_login_required
 
 main = Blueprint('main', __name__)
 
+
 @main.route('/')
 def landing():
     return render_template("index.html")
