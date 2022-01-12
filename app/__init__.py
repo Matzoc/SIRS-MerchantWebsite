@@ -19,6 +19,11 @@ def admin_login_required(f):
     return wrap
 
 
+def get_user_role():
+    if current_user.is_authenticated:
+        return current_user.role
+    else:
+        return "anonymous"
 
 def create_app():
     app = Flask(__name__)
@@ -43,7 +48,7 @@ def create_app():
     @app.before_request
     def before_request():
         session.permanent = True
-        app.permanent_session_lifetime = timedelta(minutes=0.5)
+        app.permanent_session_lifetime = timedelta(minutes=10)
 
     from .auth import auth as auth_blueprint
     app.register_blueprint(auth_blueprint)

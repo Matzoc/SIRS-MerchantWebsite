@@ -1,9 +1,9 @@
 from flask import Flask, render_template, request, make_response, redirect, url_for
 from flask import Blueprint
 from argon2 import PasswordHasher
-from flask_login import login_user
+from flask_login import login_user, login_required, logout_user
 from .models import User
-from . import db
+from . import db, get_user_role
 import base64
 
 
@@ -27,7 +27,7 @@ def verify_register(email, password):
 
 @auth.route('/register')
 def register():
-    return render_template('register.html')
+    return render_template('register.html', role = get_user_role())
 
 
 @auth.route('/register', methods = ['POST'])
@@ -35,14 +35,14 @@ def register_post():
     email, password = request.form.get("email"), request.form.get("password")
 
     if not verify_register(email, password):
-        return render_template("register.html", error_msg = "email already in use")
+        return render_template("register.html", error_msg = "email already in use", role = get_user_role())
     else:
-        return render_template("register.html", error_msg = "we did it wee")
+        return render_template("register.html", error_msg = "we did it wee", role = get_user_role())
 
 
 @auth.route('/login')
 def login():
-    return render_template("login.html")
+    return render_template("login.html", role = get_user_role())
 
 
 @auth.route('/login', methods = ['POST'])
@@ -54,4 +54,12 @@ def login_post():
         login_user(user, remember=False)
         return redirect(url_for('main.profile'))
     
-    return render_template("login.html", error_msg = "login failed, please try again")
+    return render_template("login.html", error_msg = "login failed, please try again", role = get_user_role())
+
+
+
+@auth.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('main.landing'))

@@ -2,7 +2,7 @@ from flask import Blueprint
 from flask import Flask, render_template, request, make_response
 from flask_login import login_required, current_user
 from functools import wraps
-from . import admin_login_required, db
+from . import admin_login_required, db, get_user_role
 from .models import Item
 
 main = Blueprint('main', __name__)
@@ -10,27 +10,26 @@ main = Blueprint('main', __name__)
 
 @main.route('/')
 def landing():
-    return render_template("index.html")
+    return render_template("index.html", role = get_user_role())
 
 
 @main.route('/profile')
 @login_required
 def profile():
-    return render_template('account.html')
+    return render_template('account.html', role = get_user_role())
 
 
 @main.route('/admin')
 @login_required
 @admin_login_required
 def admin():
-    return render_template('account.html')
-
+    return render_template('account.html', role = get_user_role())
 
 
 @main.route('/create_item')
 @login_required
 def create_item_landing():
-    return render_template('create_item.html')
+    return render_template('create_item.html', role = get_user_role())
 
 
 @main.route('/create_item', methods = ['POST'])
@@ -47,18 +46,18 @@ def create_item():
     db.session.add(new_item)
     db.session.commit()
         
-    return render_template('create_item.html')
+    return render_template('create_item.html', role = get_user_role())
 
 
 @main.route('/marketplace')
 def marketplace():
     items = Item.query.all()
 
-    return render_template('marketplace.html', catalog = items)
+    return render_template('marketplace.html', catalog = items, role = get_user_role())
 
 
 @main.route('/marketplace/<id>')
 def show_item(id):
     item = Item.query.filter_by(id=id).first()
 
-    return render_template('view_item.html', item = item)
+    return render_template('view_item.html', item = item, role = get_user_role())

@@ -19,20 +19,35 @@
                             <a href="/" class="navbar-item">
                                 Home
                             </a>
+
+                            {% if role == "default" or role == "admin" %}
                             <a href="/profile" class="navbar-item">
                                 Profile
                             </a>
+
+                            <a href="/logout" class="navbar-item">
+                                Logout
+                            </a>
+
+                            {% else %}
                             <a href="/login" class="navbar-item">
                                 Login
                             </a>
                             <a href="/register" class="navbar-item">
                                 Sign Up
                             </a>
-                            <a href="/marketplace" class="navbar-item">
-                                Marketplace
+                            {% endif %}
+
+                            {% if role == "admin" %}
+                            <a href="/admin" class="navbar-item">
+                                Admin
                             </a>
                             <a href="/create_item" class="navbar-item">
-                                Create
+                                Create Item
+                            </a>
+                            {% endif %}
+                            <a href="/marketplace" class="navbar-item">
+                                Marketplace
                             </a>
                         </div>
                     </div>
