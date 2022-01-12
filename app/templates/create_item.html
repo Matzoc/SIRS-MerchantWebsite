@@ -3,9 +3,24 @@
 {% block title %} create item {% endblock %}
 
 {% block content %} 
-    {{error_msg}} 
+  <div class="column is-4 is-offset-4">
+  <h3 class="title">Create Item</h3>
+    <div class="box">
+      {% if msg %}
+        {% if msg_type == "warning" %}
+          <div class="notification is-warning">
+        {% elif msg_type == "error" %}
+          <div class="notification is-danger">
+        {% elif msg_type == "success" %}
+          <div class="notification is-success">
+        {% else %}
+          <div>
+        {% endif %}
+          {{msg}}
+        </div>
+      {% endif %}
 
-    <form action="/create_item" method="post">
+      <form action="/create_item" method="post">
         <input class="input is-medium" type="text" id="name" name="name" placeholder="Item name"><br><br>
 
         <input class="input is-medium" type="text" id="description" name="description" placeholder="Item description"><br><br>
@@ -16,7 +31,5 @@
         
         <input class="button is-block is-info is-medium is-fullwidth" type="submit" value="Create">
       </form>   
-      
-
-
+    </div>
 {% endblock %} 
