@@ -4,7 +4,7 @@ from argon2 import PasswordHasher
 from flask_login import login_user, login_required, logout_user
 from .models import User
 from . import db, get_user_role
-import base64
+from .messages import login_msgs, register_msgs
 
 
 auth = Blueprint('auth', __name__)
@@ -35,9 +35,9 @@ def register_post():
     email, password = request.form.get("email"), request.form.get("password")
 
     if not verify_register(email, password):
-        return render_template("register.html", error_msg = "email already in use", role = get_user_role())
+        return render_template("register.html", msg = register_msgs["error"], role = get_user_role(), msg_type = "error")
     else:
-        return render_template("register.html", error_msg = "we did it wee", role = get_user_role())
+        return render_template("register.html", msg = register_msgs["success"], role = get_user_role(), msg_type = "success")
 
 
 @auth.route('/login')
@@ -49,12 +49,18 @@ def login():
 def login_post():
     email, password = request.form.get("email"), request.form.get("password")
     user = User.query.filter_by(email=email).first()
+    msg = login_msgs["error"]
 
-    if user and ph.verify(user.password, password):
-        login_user(user, remember=False)
-        return redirect(url_for('main.profile'))
+    if user:
+        try:
+            ph.verify(user.password, password)
+            login_user(user, remember=False)
+
+            return redirect(url_for('main.profile'))
+        except:
+            msg = login_msgs["wrong password"]      
     
-    return render_template("login.html", error_msg = "login failed, please try again", role = get_user_role())
+    return render_template("login.html", msg = msg, msg_type = "error",role = get_user_role())
 
 
 
