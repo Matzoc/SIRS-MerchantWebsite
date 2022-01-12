@@ -51,17 +51,20 @@ def login_post():
     user = User.query.filter_by(email=email).first()
     msg = login_msgs["error"]
 
-    if user:
-        try:
-            ph.verify(user.password, password)
-            login_user(user, remember=False)
+    if not user:
+        msg = login_msgs["wrong password"] 
+        return render_template("login.html", msg = msg, msg_type = "error", role = get_user_role())
 
-            return redirect(url_for('main.profile'))
-        except:
-            msg = login_msgs["wrong password"]      
+    try:
+        ph.verify(user.password, password)
+        login_user(user, remember=False)
+
+        return redirect(url_for('main.profile'))
+    except:
+        msg = login_msgs["wrong password"] 
+        return render_template("login.html", msg = msg, msg_type = "error", role = get_user_role())
+
     
-    return render_template("login.html", msg = msg, msg_type = "error",role = get_user_role())
-
 
 
 @auth.route('/logout')
