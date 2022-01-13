@@ -17,7 +17,7 @@ def landing():
 @main.route('/profile')
 @login_required
 def profile():
-    return render_template('account.html', role = get_user_role())
+    return render_template('account.html', role = get_user_role(), username = current_user.email)
 
 
 @main.route('/create_item', methods = ['POST'])
