@@ -13,9 +13,9 @@ def admin_login_required(f):
     def wrap(*args, **kwargs):
         if current_user.role != "admin":
             return "rip", 401
-        
+
         return f(*args, **kwargs)
-        
+
     return wrap
 
 
@@ -25,11 +25,15 @@ def get_user_role():
     else:
         return "anonymous"
 
+
 def create_app():
     app = Flask(__name__)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://usr:password@'+ os.environ["host"] +'/test'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://usr:password@' + \
+        os.environ["host"] + '/test'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['SECRET_KEY'] = '1234'#FIXME give me a real secret key
+    # How to generate good secret keys:
+    # @see https://flask.palletsprojects.com/en/1.0.x/quickstart/#sessions
+    app.config['SECRET_KEY'] = b'\x1f\xa8w\x1c\xd4\xf3\x90\x16\xaf]\x9eT\xea\x1b\xd1e'
     db.init_app(app)
 
     from .models import init
@@ -59,19 +63,19 @@ def create_app():
     return app
 
 
-#add tries to everything(!)
+# add tries to everything(!)
 
-#Account menu
+# Account menu
 #   change password - later
 #   order history - later
 #   shop cart - later
 #   ?
 
-#Shop
+# Shop
 #   shop page
 #   page to add custom items to the shop (the admin accounts can do this)
 #   store purchases in database
 
 
-#Order Page
+# Order Page
 #
