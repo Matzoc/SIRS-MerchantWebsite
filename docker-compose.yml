@@ -1,14 +1,20 @@
 version: "3.3"
 services:
   web:
-    build: ./app
+    build: ./HamstringRestrainingApp
     ports:
       - "5000:5000"
     environment:
       host: 'mysql-db'
     restart: always
+  
+    networks:
+      app_net:
+        ipv4_address: 172.18.1.2
   mysql-db:
-    image: mysql:5.7
+    build: ./Database
+    networks:
+     - app_net
     restart: always
     ports:
       # <Port exposed> : < MySQL Port running inside container>
@@ -28,6 +34,23 @@ services:
       MYSQL_PASSWORD: 'password'
       # Password for root access
       MYSQL_ROOT_PASSWORD: 'password'
+  nginx:
+    build: ./nginx
+    ports: 
+      - '80'
+    expose:
+      - '80'
+    volumes:
+      - nginx:/var/lib/nginx
+    networks:
+     - app_net
   # Names our volume
 volumes:
   my-db:
+  nginx:
+networks:
+  app_net:
+    driver: bridge
+    ipam:
+     config:
+        - subnet: 172.18.1.0/16

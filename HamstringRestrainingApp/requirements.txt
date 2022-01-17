@@ -3,3 +3,4 @@ argon2_cffi
 mysqlclient
 flask-sqlalchemy 
 flask-login
+gunicorn

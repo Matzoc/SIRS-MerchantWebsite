@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 FROM ubuntu
 WORKDIR /code
-ENV FLASK_APP=__init__.py
+ENV FLASK_APP=webapp/__init__.py
 ENV FLASK_RUN_HOST=0.0.0.0
 # this enables debugging and automatic reloading:
 # ENV FLASK_ENV=development
@@ -15,4 +15,5 @@ COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 EXPOSE 5000
 COPY . .
-CMD ["flask", "run"]
+CMD ["gunicorn" , "-b", "0.0.0.0:5000", "wsgi:app"]
+# gunicorn -b 0.0.0.0:5000 wsgi:app
