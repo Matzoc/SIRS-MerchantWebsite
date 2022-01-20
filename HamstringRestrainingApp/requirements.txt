@@ -4,3 +4,4 @@ mysqlclient
 flask-sqlalchemy 
 flask-login
 gunicorn
+Werkzeug

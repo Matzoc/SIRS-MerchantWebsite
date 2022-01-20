@@ -15,5 +15,5 @@ COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 EXPOSE 5000
 COPY . .
-CMD ["gunicorn" , "-b", "0.0.0.0:5000", "wsgi:app"]
+CMD ["gunicorn" ,"-b", "0.0.0.0:5000", "wsgi:app"]
 # gunicorn -b 0.0.0.0:5000 wsgi:app
