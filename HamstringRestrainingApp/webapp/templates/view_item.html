@@ -8,4 +8,10 @@
     Item Price: {{item.price}}<br><br>
     Item Type: {{item.type}}<br><br>
     Item Id: {{item.id}}
+
+    <form action="/buy_item/{{item.id}}">
+        <input class="button is-block is-info is-medium is-fullwidth" type="submit" value="Buy">
+    </form>
+    
+    
 {% endblock %}

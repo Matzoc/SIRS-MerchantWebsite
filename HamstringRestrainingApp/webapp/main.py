@@ -5,6 +5,9 @@ from functools import wraps
 from . import admin_login_required, db, get_user_role
 from .models import Item
 from .messages import update_msgs
+from flask import redirect
+from merchantclient import *
+import asyncio
 
 main = Blueprint('main', __name__)
 
@@ -64,6 +67,18 @@ def admin():
 @admin_login_required
 def create_item_landing():
     return render_template('create_item.html', role = get_user_role())
+
+
+@main.route('/buy_item/<id>')
+@login_required
+def buy_item(id):
+    item = Item.query.filter_by(id=id).first()
+
+    username = current_user.email
+
+    transactionID = asyncio.run(createTransaction(item.price, "dollar", '48379582343242'))
+
+    return redirect("https://172.18.1.3/transaction/" + transactionID, code=302)
 
 
 @main.route('/edit_item/<id>')

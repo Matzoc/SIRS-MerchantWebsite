@@ -84,7 +84,7 @@ def parsePacket(data, currentTimestamp, encryption, decryptor=None, verifier=Non
 
 def signPacket(packet, senderCertificate):
     pkey = ""
-    with open("certs/pis.key", "r") as key_file:
+    with open("/code/webapp/certs/pis.key", "r") as key_file:
         pkey = RSA.importKey(key_file.read())
 
 
@@ -115,7 +115,7 @@ def verifySignature(packet, verifier):
 
 def verifyCertificate(pem_data_to_check):
 
-    with open("certs/myCA.pem", "rb") as key_file:
+    with open("/code/certs/myCA.pem", "rb") as key_file:
         root_cert = load_certificate(crypto.FILETYPE_PEM, key_file.read())
         
         untrusted_cert = load_certificate(crypto.FILETYPE_PEM, pem_data_to_check.encode())

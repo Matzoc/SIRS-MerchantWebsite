@@ -15,14 +15,14 @@ import urllib.parse
 from communication import *
 
 
-async def hello():
+async def createTransaction(price, currency, bankAccount):
     currentTimestamp = getTimestamp() 
     private_key = ''
     
-    with open("certs/merchant.key", "rb") as key_file:
+    with open("/code/certs/merchant.key", "rb") as key_file:
         private_key = load_pem_private_key(key_file.read(), None)
 
-    websocket = await websockets.connect("ws://localhost:8755")
+    websocket =  await websockets.connect("ws://172.18.1.3:8755")
 
     currentTimestamp, request = createPacket(
                 {"message" : "GET CERTIFICATE"}, 'RAW', signer=private_key.sign)
@@ -37,7 +37,7 @@ async def hello():
 
     
 
-    response = await websocket.recv()
+    response =  await websocket.recv()
     currentTimestamp, response = parsePacket(response, currentTimestamp, 'RAW')
 
     print(response)
@@ -50,7 +50,7 @@ async def hello():
 
     # ---- SecretKey exchange ----
 
-    response = await websocket.recv()
+    response =  await websocket.recv()
     currentTimestamp, response = parsePacket(response, currentTimestamp, 'RSA', decryptor=private_key.decrypt, verifier=cert.public_key().verify)
 
     print(response)
@@ -60,25 +60,20 @@ async def hello():
 
 
     cipher = Cipher(algorithms.AES(aes_key), modes.CFB(aes_iv))
-    encryptor = cipher.encryptor()
 
-    data = {"currency" : "dollar", "price" : 500, "bankAccount" : "1283728193993"}
+    data = {"currency" : currency, "price" : price, "bankAccount" : bankAccount}
 
 
     currentTimestamp, response = createPacket(
         data, 'AES', cipher.encryptor(), signer=private_key.sign)
 
-
     await websocket.send(response)
 
-    #cert = load_pem_x509_certificate(bytes(cert, 'utf-8'))
 
     request = await websocket.recv()
     currentTimestamp, request = parsePacket(
         request, currentTimestamp, 'AES', decryptor=cipher.decryptor(), verifier=cert.public_key().verify)
 
-    print(request)
+    return request["data"]["transactionID"]
 
 
-
-asyncio.run(hello())
