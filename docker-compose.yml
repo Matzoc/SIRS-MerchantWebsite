@@ -3,7 +3,7 @@ services:
   web:
     build: ./HamstringRestrainingApp
     ports:
-      - "5000:5000"
+      - "5000:9000"
     environment:
       host: 'mysql-db'
     restart: always
@@ -19,9 +19,11 @@ services:
     ports:
       # <Port exposed> : < MySQL Port running inside container>
       - '3306'
+      - '8765'
     expose:
       # Opens port 3306 on the container
       - '3306'
+      - '8765'
       # Where our data will be persisted
     volumes:
       - my-db:/var/lib/mysql
@@ -38,12 +40,15 @@ services:
     build: ./nginx
     ports: 
       - '80'
+      - '8765'
     expose:
       - '80'
+      - '8765'
     volumes:
       - nginx:/var/lib/nginx
     networks:
-     - app_net
+      app_net:
+        ipv4_address: 172.18.1.3
   # Names our volume
 volumes:
   my-db:
