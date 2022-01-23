@@ -5,10 +5,12 @@ from flask_login import login_user, login_required, logout_user
 from .models import User
 from . import db, get_user_role
 from .messages import login_msgs, register_msgs
+from secrets import token_urlsafe
+from datetime import datetime
 
 
 auth = Blueprint('auth', __name__)
-ph = PasswordHasher()
+ph = PasswordHasher()    
 
 
 def verify_register(email, password):
@@ -18,7 +20,13 @@ def verify_register(email, password):
         return False
     else:
         hashed_password = ph.hash(password)
-        new_user = User(email=email, password = hashed_password, role = "default")
+        token = token_urlsafe(32)
+
+        from .mail import send_verification
+        send_verification(email, url_for("auth.verify_email", token = token, _external = True))
+    
+        new_user = User(email = email, password = hashed_password, role = "unverified", token = token, timestamp = datetime.utcnow())
+
         db.session.add(new_user)
         db.session.commit()
         
@@ -38,6 +46,23 @@ def register_post():
         return render_template("register.html", msg = register_msgs["error"], role = get_user_role(), msg_type = "error")
     else:
         return render_template("register.html", msg = register_msgs["success"], role = get_user_role(), msg_type = "success")
+
+
+@auth.route('/verify_email/<token>', methods = ['GET'])
+def verify_email(token):
+    user = User.query.filter_by(token=token).first()
+
+    if user and user.token == token and (datetime.utcnow() - user.timestamp).total_seconds() < 120 * 60:
+        user.token = None
+        user.role = "default"
+
+        db.session.commit()
+
+        return render_template('verify_email.html', role = get_user_role())
+    else:
+        return "Page not found", 400
+
+
 
 
 @auth.route('/login')

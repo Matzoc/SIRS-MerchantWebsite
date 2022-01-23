@@ -9,7 +9,8 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(97), nullable=False)
     role = db.Column(db.String(50), default = "standard", nullable=False)
-
+    token = db.Column(db.String(60))
+    timestamp = db.Column(db.DateTime)
 
 class Item(db.Model):
     id = db.Column(db.Integer, primary_key=True)

@@ -30,6 +30,7 @@ def get_user_role():
 def create_app():
     app = Flask(__name__)
     app.wsgi_app = ProxyFix(app.wsgi_app)
+
     app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://usr:password@' + \
         os.environ["host"] + '/test'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -37,9 +38,15 @@ def create_app():
     # How to generate good secret keys:
     # @see https://flask.palletsprojects.com/en/1.0.x/quickstart/#sessions
     app.config['SECRET_KEY'] = b'\x1f\xa8w\x1c\xd4\xf3\x90\x16\xaf]\x9eT\xea\x1b\xd1e'
+
+
+
     db.init_app(app)
 
     from .models import init
+    init(app)
+
+    from .mail import init
     init(app)
 
     login_manager = LoginManager()
