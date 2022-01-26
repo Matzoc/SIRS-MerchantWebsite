@@ -4,6 +4,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_required, current_user
 from datetime import timedelta
 from functools import wraps
+from time import sleep
+
 
 import os
 db = SQLAlchemy()
@@ -28,33 +30,33 @@ def get_user_role():
 
 
 def create_app():
+
     app = Flask(__name__)
     app.wsgi_app = ProxyFix(app.wsgi_app)
 
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://usr:password@' + \
-        os.environ["host"] + '/test'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:password@' + "172.18.2.4" + '/test'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['PREFERRED_URL_SCHEME'] = 'https'
     # How to generate good secret keys:
     # @see https://flask.palletsprojects.com/en/1.0.x/quickstart/#sessions
     app.config['SECRET_KEY'] = b'\x1f\xa8w\x1c\xd4\xf3\x90\x16\xaf]\x9eT\xea\x1b\xd1e'
 
-
+    from .models import User, Transaction, Item
 
     db.init_app(app)
 
     from .models import init
     init(app)
 
-    from .mail import init
-    init(app)
+    from .mail import init_mail
+    init_mail(app)
 
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'
     login_manager.init_app(app)
     
 
-    from .models import User
+    
 
     @login_manager.user_loader
     def load_user(user_id):

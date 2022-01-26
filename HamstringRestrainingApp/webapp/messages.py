@@ -6,6 +6,7 @@ register_msgs = {
 login_msgs = {
     'error' : 'login failed, please try again',
     'wrong password' : 'wrong password, please try again',
+    'account not verified' : 'please verify your email address, check spam'
 }
 
 update_msgs = {

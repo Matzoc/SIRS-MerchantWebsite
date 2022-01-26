@@ -20,6 +20,17 @@ class Item(db.Model):
     type = db.Column(db.String(100), nullable=False)
 
 
+
+class Transaction(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    transactionID = db.Column(db.String(97), unique=True, nullable=False)
+    price = db.Column(db.Float, nullable=False)
+    currency = db.Column(db.String(97), nullable=False)
+    clientemail = db.Column(db.String(100), nullable=False)
+    status = db.Column(db.String(100), default="UNPAID", nullable=False)
+
+
+
 def init(app):
     with app.app_context():
         db.create_all()

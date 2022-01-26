@@ -14,6 +14,8 @@ RUN apt-get install pip -y; exit 0
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 EXPOSE 5000
+EXPOSE 10500
 COPY . .
-CMD ["gunicorn" ,"-b", "0.0.0.0:5000", "wsgi:app"]
+RUN chmod +x /code/start.sh
+CMD ["/code/start.sh"]
 # gunicorn -b 0.0.0.0:5000 wsgi:app

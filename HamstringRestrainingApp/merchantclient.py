@@ -15,6 +15,7 @@ import urllib.parse
 from communication import *
 
 
+
 async def createTransaction(price, currency, bankAccount):
     currentTimestamp = getTimestamp() 
     private_key = ''

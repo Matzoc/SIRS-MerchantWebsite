@@ -80,6 +80,11 @@ def login_post():
         msg = login_msgs["wrong password"] 
         return render_template("login.html", msg = msg, msg_type = "error", role = get_user_role())
 
+    if user.role == 'unverified':
+        msg = login_msgs["account not verified"] 
+        return render_template("login.html", msg = msg, msg_type = "error", role = get_user_role())
+
+
     try:
         ph.verify(user.password, password)
         login_user(user, remember=False)
