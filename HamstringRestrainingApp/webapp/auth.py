@@ -7,7 +7,7 @@ from . import db, get_user_role
 from .messages import login_msgs, register_msgs
 from secrets import token_urlsafe
 from datetime import datetime
-
+from .mail import send_verification
 
 auth = Blueprint('auth', __name__)
 ph = PasswordHasher()    
@@ -22,7 +22,6 @@ def verify_register(email, password):
         hashed_password = ph.hash(password)
         token = token_urlsafe(32)
 
-        from .mail import send_verification
         send_verification(email, url_for("auth.verify_email", token = token, _external = True))
     
         new_user = User(email = email, password = hashed_password, role = "unverified", token = token, timestamp = datetime.utcnow())

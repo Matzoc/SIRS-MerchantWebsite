@@ -1,25 +1,19 @@
-from flask import Flask
-from flask_mail import Mail, Message
-
-mail = Mail()
-
-def init_mail(app):
-    settings = {
-        "MAIL_SERVER": 'smtp.gmail.com',
-        "MAIL_PORT": 465,
-        "MAIL_USE_TLS": False,
-        "MAIL_USE_SSL": True,
-        "MAIL_USERNAME": 'hamstringrestraining@gmail.com',
-        "MAIL_PASSWORD": "-5v+nPGRrpm6cuEZ",
-        "MAIL_DEFAULT_SENDER" : 'hamstringrestraining@gmail.com' 
-    }
-
-    app.config.update(settings)
-    mail.init_app(app)
+import smtplib, ssl
 
 
 def send_verification(email, token):
-    msg = Message(subject="Hello",
-                recipients=[email], # replace with your email for testing
-                body="Click this link to verify your account: " + token)
-    mail.send(msg)
+
+    port = 465  # For SSL
+    smtp_server = "smtp.gmail.com"
+    sender_email = "hamstringrestraining@gmail.com"  # Enter your address
+    receiver_email = email  # Enter receiver address
+    password = "-5v+nPGRrpm6cuEZ"
+    message = """\
+    Subject: Hi there\n
+
+    Click this link to verify your account: : %s""" % (token)
+
+    context = ssl.create_default_context()
+    with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
+        server.login(sender_email, password)
+        server.sendmail(sender_email, receiver_email, message)

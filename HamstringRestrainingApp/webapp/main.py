@@ -62,6 +62,19 @@ def admin():
     return render_template('account.html', role=get_user_role())
 
 
+@main.route('/transactions')
+@login_required
+def transactions():
+    transactions = ''
+
+    if get_user_role() == 'admin':
+        transactions = Transaction.query.all()
+    else:
+        transactions = Transaction.query.filter_by(paidbyemail=current_user.email)
+
+    return render_template('transactions.html',  catalog = transactions, role=get_user_role())
+
+
 @main.route('/create_item')
 @login_required
 @admin_login_required

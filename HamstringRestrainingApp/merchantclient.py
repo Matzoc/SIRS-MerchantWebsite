@@ -1,49 +1,32 @@
-import hashlib
-import asyncio
 import websockets
-import json
 import base64
-from cryptography.x509 import load_pem_x509_certificate, ocsp
+from cryptography.x509 import load_pem_x509_certificate
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives.serialization import load_pem_private_key
-from cryptography import x509
-from cryptography.hazmat.primitives.asymmetric import padding
-from cryptography.hazmat.primitives import hashes
-from datetime import datetime
-import urllib.parse
-
 from communication import *
 
 
-
 async def createTransaction(price, currency, bankAccount):
-    currentTimestamp = getTimestamp() 
+    currentTimestamp = getTimestamp()
     private_key = ''
-    
+
     with open("/code/certs/merchant.key", "rb") as key_file:
         private_key = load_pem_private_key(key_file.read(), None)
 
-    websocket =  await websockets.connect("ws://172.18.1.3:8755")
+    websocket = await websockets.connect("ws://172.18.1.3:8755")
 
-    currentTimestamp, request = createPacket(
-                {"message" : "GET CERTIFICATE"}, 'RAW', signer=private_key.sign)
-    
-    await websocket.send(request)
+    request = await sendPacket(
+        websocket, {"message": "GET CERTIFICATE"}, 'RAW')
 
     with open("certs/merchant.crt", "r") as cert:
-        currentTimestamp, request = createPacket(
-                {"message" : cert.read()}, 'RAW', signer=private_key.sign)
-    
-    await websocket.send(request)
+        request = await sendPacket(
+            websocket, {"message": cert.read()}, 'RAW')
 
-    
 
-    response =  await websocket.recv()
-    currentTimestamp, response = parsePacket(response, currentTimestamp, 'RAW')
+    currentTimestamp, response = await getPacket(websocket, currentTimestamp, 'RAW')
 
-    print(response)
 
-    if not verifyCertificate(response["data"]["message"]):
+    if not verifyCertificate(response["data"]["message"], "/code/certs/myCA.pem"):
         print("PIS certificate is invalid")
         return
 
@@ -51,30 +34,25 @@ async def createTransaction(price, currency, bankAccount):
 
     # ---- SecretKey exchange ----
 
-    response =  await websocket.recv()
-    currentTimestamp, response = parsePacket(response, currentTimestamp, 'RSA', decryptor=private_key.decrypt, verifier=cert.public_key().verify)
+    currentTimestamp, response = await getPacket(websocket, currentTimestamp, 'RSA', decryptor=private_key.decrypt, verifier=cert.public_key().verify)
 
-    print(response)
 
     aes_key = base64.b64decode(response["data"]["key"])
     aes_iv = base64.b64decode(response["data"]["iv"])
 
-
     cipher = Cipher(algorithms.AES(aes_key), modes.CFB(aes_iv))
 
-    data = {"currency" : currency, "price" : price, "bankAccount" : bankAccount}
+    # ---- Send payment information to create transaction ----
+
+    data = {"currency": currency, "price": price, "bankAccount": bankAccount}
+
+    response = await sendPacket(
+        websocket, data, 'AES', cipher.encryptor(), signer=private_key.sign)
 
 
-    currentTimestamp, response = createPacket(
-        data, 'AES', cipher.encryptor(), signer=private_key.sign)
+    # ---- Get transactionID  ----
 
-    await websocket.send(response)
-
-
-    request = await websocket.recv()
-    currentTimestamp, request = parsePacket(
-        request, currentTimestamp, 'AES', decryptor=cipher.decryptor(), verifier=cert.public_key().verify)
+    currentTimestamp, request = await getPacket(
+        websocket, currentTimestamp, 'AES', decryptor=cipher.decryptor(), verifier=cert.public_key().verify)
 
     return request["data"]["transactionID"]
-
-
