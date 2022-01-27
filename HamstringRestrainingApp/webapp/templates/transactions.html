@@ -2,24 +2,45 @@
 
 {% block title %} Marketplace {% endblock %}
 
-{% block content %} 
-    {{error_msg}} 
-      
-<table class="table table-striped">
-    <tr>
-        <td class="table-catalog">
-            <ul class="list-group">
-            {% for element in catalog %}
-                <li class="list-group-item catalog-list">
-                    <table class="table-responsive">
-                        <tr>
-                            <a>{{element.transactionID}} {{element.price}} {{element.currency}} {{element.clientemail}}, {{element.status}}</a>
-                        </tr>
-                    </table>
-                </li>
-            {% endfor %}
-            </ul>
-        </td>
-    </tr>
+{% block content %}
+{{error_msg}}
+
+<style>
+    table.center {
+        margin-left: auto;
+        margin-right: auto;
+    }
+</style>
+
+<table class="table center is-striped">
+    <thead>
+        <tr>
+            <th>transactionID</th>
+            <th>price</th>
+            <th>currency</th>
+            <th>client email</th>
+            <th>status</th>
+        </tr>
+    </thead>
+    <tfoot>
+        <tr>
+            <th>transactionID</th>
+            <th>price</th>
+            <th>currency</th>
+            <th>client email</th>
+            <th>status</th>
+        </tr>
+    </tfoot>
+    <tbody>
+        {% for element in catalog %}
+        <tr>
+            <th>{{element.transactionID}}</th>
+            <th>{{element.price}}</th>
+            <th>{{element.currency}}</th>
+            <th>{{element.clientemail}}</th>
+            <th>{{element.status}}</th>
+        </tr>
+        {% endfor %}
+    </tbody>
 </table>
 {% endblock %}

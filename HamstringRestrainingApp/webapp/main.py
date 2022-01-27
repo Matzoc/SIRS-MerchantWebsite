@@ -83,8 +83,13 @@ def create_item_landing():
 
 
 @main.route('/buy_item/<id>')
-@login_required
 def buy_item(id):
+    email = ''
+    if get_user_role() == 'anonymous':
+        email = 'anonymous'
+    else :
+        email = current_user.email
+
     item = Item.query.filter_by(id=id).first()
 
     transactionID = asyncio.run(createTransaction(
@@ -93,7 +98,7 @@ def buy_item(id):
     new_transaction = Transaction(transactionID=transactionID,
                                   price=item.price,
                                   currency="dollar",
-                                  clientemail=current_user.email)
+                                  clientemail=email)
 
     db.session.add(new_transaction)
     db.session.commit()

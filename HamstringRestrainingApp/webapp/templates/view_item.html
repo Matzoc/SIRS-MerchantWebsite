@@ -3,15 +3,21 @@
 {% block title %} {{item.name}} {% endblock %}
 
 {% block content %}
-    Item Name: {{item.name}}<br><br>
-    Item Description: {{item.description}}<br><br>
-    Item Price: {{item.price}}<br><br>
-    Item Type: {{item.type}}<br><br>
-    Item Id: {{item.id}}
+Item Name: {{item.name}}<br><br>
+Item Description: {{item.description}}<br><br>
+Item Price: {{item.price}}<br><br>
+Currency: Dollars<br><br>
+Item Type: {{item.type}}<br><br>
+Item Id: {{item.id}}<br><br>
 
-    <form action="/buy_item/{{item.id}}">
-        <input class="button is-block is-info is-medium is-fullwidth" type="submit" value="Buy">
-    </form>
-    
-    
+
+
+<form action="/buy_item/{{item.id}}">
+
+    <div style="text-align: center;">
+        <button class="button is-info is-medium" type="submit">Buy Now with PIS!</button>
+      </div>
+</form>
+
+
 {% endblock %}
