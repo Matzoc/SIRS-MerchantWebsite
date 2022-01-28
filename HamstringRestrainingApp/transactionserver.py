@@ -36,7 +36,7 @@ session = Session()
 
 
 async def pisHandler(websocket):
-    currentTimestamp = getTimestamp() - 500
+    currentTimestamp = getTimestamp() - 5000
     private_key = ''
     with open("/code/certs/merchant.key", "rb") as key_file:
         private_key = load_pem_private_key(key_file.read(), None)

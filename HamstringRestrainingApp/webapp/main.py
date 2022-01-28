@@ -52,6 +52,9 @@ def marketplace():
 def show_item(id):
     item = Item.query.filter_by(id=id).first()
 
+    if not item:
+        return redirect(url_for('main.landing'))
+
     return render_template('view_item.html', item=item, role=get_user_role())
 
 
@@ -70,7 +73,7 @@ def transactions():
     if get_user_role() == 'admin':
         transactions = Transaction.query.all()
     else:
-        transactions = Transaction.query.filter_by(paidbyemail=current_user.email)
+        transactions = Transaction.query.filter_by(clientemail=current_user.email)
 
     return render_template('transactions.html',  catalog = transactions, role=get_user_role())
 
@@ -91,6 +94,9 @@ def buy_item(id):
         email = current_user.email
 
     item = Item.query.filter_by(id=id).first()
+
+    if not item:
+        return redirect(url_for('main.landing'))
 
     transactionID = asyncio.run(createTransaction(
         item.price, "dollar", '48379582343242'))

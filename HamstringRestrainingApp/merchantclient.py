@@ -7,7 +7,7 @@ from communication import *
 
 
 async def createTransaction(price, currency, bankAccount):
-    currentTimestamp = getTimestamp()
+    currentTimestamp = getTimestamp() - 5000
     private_key = ''
 
     with open("/code/certs/merchant.key", "rb") as key_file:
